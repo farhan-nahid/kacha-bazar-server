@@ -95,6 +95,14 @@ async function run() {
     
     */
 
+    // POST A SINGLE PRODUCT
+
+    app.post('/add-product', async (req, res) => {
+      const product = req.body;
+      const result = await productCollection.insertOne(product);
+      res.json(result);
+    });
+
     /* 
     
         ===============================================
