@@ -66,13 +66,31 @@ async function run() {
       res.json(products);
     });
 
-    // GET A SINGLE PRODUCT BY ID
+    // GET ALL ORDERs AND FILTER ALSO
 
-    app.get('/product/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await productCollection.findOne(query);
-      res.json(result);
+    app.get('/all-orders', async (req, res) => {
+      let query = {};
+      const email = req.query.email;
+      console.log(email);
+      if (email) {
+        query = { email };
+      }
+      const cursor = orderCollection.find(query);
+      const allOrders = await cursor.toArray();
+      res.json(allOrders);
+    });
+
+    // GET ADMIN OR NOT?
+
+    app.get('/user/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await userCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === 'Admin') {
+        isAdmin = true;
+      }
+      res.json({ admin: isAdmin });
     });
 
     /* 
@@ -103,6 +121,22 @@ async function run() {
       res.json(result);
     });
 
+    // POST A SINGLE ORDER
+
+    app.post('/order', async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
+      res.json(result);
+    });
+
+    // POST A USER
+
+    app.post('/user', async (req, res) => {
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
+      res.json(result);
+    });
+
     /* 
     
         ===============================================
@@ -122,6 +156,35 @@ async function run() {
         ===============================================
     
     */
+
+    // PUT USER
+
+    app.put('/user', async (req, res) => {
+      const user = req.body;
+      const filter = { user: user.email };
+      const option = { upsert: true };
+      const updateUser = { $set: user };
+      const result = await userCollection.updateOne(filter, updateUser, option);
+      res.json(result);
+    });
+
+    // PUT admin & check with JWT Token  he/she is admin or not ?
+
+    app.put('/user/admin', verifyJwtToken, async (req, res) => {
+      const newAdmin = req.body;
+      const email = req.decodedEmail;
+      if (email) {
+        const requester = await usersCollection.findOne({ email });
+        if (requester.role === 'Admin') {
+          const filter = { email: newAdmin.email };
+          const updateUser = { $set: { role: 'Admin' } };
+          const result = await usersCollection.updateOne(filter, updateUser);
+          res.json(result);
+        }
+      } else {
+        req.status(401).json({ message: 'You do not have access to make admin' });
+      }
+    });
 
     /* 
     
