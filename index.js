@@ -93,6 +93,14 @@ async function run() {
       res.json({ admin: isAdmin });
     });
 
+    // GET ALL REVIEW DATA
+
+    app.get('/all-reviews', async (req, res) => {
+      const cursor = reviewCollection.find({});
+      const allReviews = await cursor.toArray();
+      res.json(allReviews);
+    });
+
     /* 
     
         ===============================================
@@ -137,6 +145,14 @@ async function run() {
       res.json(result);
     });
 
+    // POST A REVIEW
+
+    app.post('/add-reviews', async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      res.json(result);
+    });
+
     /* 
     
         ===============================================
@@ -174,11 +190,11 @@ async function run() {
       const newAdmin = req.body;
       const email = req.decodedEmail;
       if (email) {
-        const requester = await usersCollection.findOne({ email });
+        const requester = await userCollection.findOne({ email });
         if (requester.role === 'Admin') {
           const filter = { email: newAdmin.email };
           const updateUser = { $set: { role: 'Admin' } };
-          const result = await usersCollection.updateOne(filter, updateUser);
+          const result = await userCollection.updateOne(filter, updateUser);
           res.json(result);
         }
       } else {
