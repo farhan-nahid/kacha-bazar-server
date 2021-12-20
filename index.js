@@ -71,7 +71,6 @@ async function run() {
     app.get('/all-orders', async (req, res) => {
       let query = {};
       const email = req.query.email;
-      console.log(email);
       if (email) {
         query = { email };
       }
@@ -261,5 +260,5 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.get('/', (req, res) => res.send('Welcome to Mobile Store Server API'));
+app.get('/', (req, res) => res.send('Welcome to Kacha Bazar Server API'));
 app.listen(port, () => console.log(`Server Running on localhost:${port}`));
