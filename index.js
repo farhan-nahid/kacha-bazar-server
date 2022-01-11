@@ -61,18 +61,21 @@ async function run() {
     // GET ALL PRODUCTS
 
     app.get('/all-products', async (req, res) => {
-      const cursor = productCollection.find({});
+      let query = {};
+      if (req.query.category) {
+        query = { category: req.query.category };
+      }
+      const cursor = productCollection.find(query);
       const products = await cursor.toArray();
       res.json(products);
     });
 
-    // GET ALL ORDERs AND FILTER ALSO
+    // GET ALL ORDERS AND FILTER ALSO
 
     app.get('/all-orders', async (req, res) => {
       let query = {};
-      const email = req.query.email;
-      if (email) {
-        query = { email };
+      if (req.query.email) {
+        query = { email: req.query.email };
       }
       const cursor = orderCollection.find(query);
       const allOrders = await cursor.toArray();
@@ -82,8 +85,7 @@ async function run() {
     // GET ADMIN OR NOT?
 
     app.get('/user/:email', async (req, res) => {
-      const email = req.params.email;
-      const query = { email };
+      const query = { email: req.params.email };
       const user = await userCollection.findOne(query);
       let isAdmin = false;
       if (user?.role === 'Admin') {
@@ -123,32 +125,28 @@ async function run() {
     // POST A SINGLE PRODUCT
 
     app.post('/add-product', async (req, res) => {
-      const product = req.body;
-      const result = await productCollection.insertOne(product);
+      const result = await productCollection.insertOne(req.body);
       res.json(result);
     });
 
     // POST A SINGLE ORDER
 
     app.post('/order', async (req, res) => {
-      const order = req.body;
-      const result = await orderCollection.insertOne(order);
+      const result = await orderCollection.insertOne(req.body);
       res.json(result);
     });
 
     // POST A USER
 
     app.post('/user', async (req, res) => {
-      const user = req.body;
-      const result = await userCollection.insertOne(user);
+      const result = await userCollection.insertOne(req.body);
       res.json(result);
     });
 
     // POST A REVIEW
 
     app.post('/add-reviews', async (req, res) => {
-      const review = req.body;
-      const result = await reviewCollection.insertOne(review);
+      const result = await reviewCollection.insertOne(req.body);
       res.json(result);
     });
 
@@ -204,12 +202,10 @@ async function run() {
     // PUT ORDERS API
 
     app.put('/order/:id', async (req, res) => {
-      const id = req.params.id;
-      const status = req.body.status;
-      const filter = { _id: ObjectId(id) };
+      const filter = { _id: ObjectId(req.params.id) };
       const updatingStatus = {
         $set: {
-          status: status,
+          status: req.body.status,
         },
       };
       const result = await orderCollection.updateOne(filter, updatingStatus);
@@ -239,8 +235,7 @@ async function run() {
     // DELETE A Order By ID
 
     app.delete('/order/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
+      const query = { _id: ObjectId(req.params.id) };
       const result = await orderCollection.deleteOne(query);
       res.json(result);
     });
