@@ -50,7 +50,7 @@ https://kacha-bazar.herokuapp.com
 - [x] Context API
 - [x] Font Awesome Icons
 - [x] React Hot Toast
-- [x] Sweet Alert
+- [x] Redux Toolkit
 - [x] Firebase
 - [x] Firebase Admin SDK
 - [x] NodeJS
@@ -66,5 +66,8 @@ https://kacha-bazar.herokuapp.com
 - [x] GIT
 - [x] GITHUB
 - [x] dotenv
+
+
+You can see Client side code in [Kacha Bazar](https://github.com/farhan-nahid/kacha-bazar)
 
 ## _Thank You So Much_.
