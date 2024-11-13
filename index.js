@@ -22,8 +22,6 @@ admin.initializeApp({
 // CONNECT WITH MONGODB
 const uri = process.env.MONGODB_URI;
 
-console.log(uri);
-
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -63,7 +61,6 @@ async function run() {
     // GET ALL PRODUCTS
 
     app.get("/all-products", async (req, res) => {
-      console.log("hit");
       let query = {};
       if (req.query.category) {
         query = { category: req.query.category };
