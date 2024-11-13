@@ -1,3 +1,4 @@
 /node_modules
 /.env
 /kacha--bazar-firebase-adminsdk.json
+.vercel
