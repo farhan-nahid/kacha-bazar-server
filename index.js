@@ -20,7 +20,9 @@ admin.initializeApp({
 });
 
 // CONNECT WITH MONGODB
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.2xoju.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const uri = process.env.MONGODB_URI;
+
+console.log(uri);
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -61,6 +63,7 @@ async function run() {
     // GET ALL PRODUCTS
 
     app.get("/all-products", async (req, res) => {
+      console.log("hit");
       let query = {};
       if (req.query.category) {
         query = { category: req.query.category };
